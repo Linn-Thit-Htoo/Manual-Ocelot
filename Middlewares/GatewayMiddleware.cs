@@ -2,6 +2,7 @@
 using Manual_Ocelot.Constants;
 using Manual_Ocelot.Services;
 using Newtonsoft.Json;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 
@@ -45,13 +46,15 @@ namespace Manual_Ocelot.Middlewares
                 var gateway = scope.ServiceProvider.GetRequiredService<IGatewayService>();
 
                 HttpResponseMessage response = null!;
-                if (route.LoadBalancerOptions.Type.Equals(LoadBalancingConstant.RoundRobin))
+
+                switch (route.LoadBalancerOptions.Type)
                 {
-                    response = await gateway.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
-                }
-                else if (route.LoadBalancerOptions.Type.Equals(LoadBalancingConstant.LeastConnection))
-                {
-                    response = await gateway.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route);
+                    case nameof(LoadBalancingConstant.RoundRobin):
+                        response = await gateway.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
+                        break;
+                    case nameof(LoadBalancingConstant.LeastConnection):
+                        response = await gateway.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route);
+                        break;
                 }
 
                 httpContext.Response.StatusCode = (int)response!.StatusCode;
@@ -61,7 +64,7 @@ namespace Manual_Ocelot.Middlewares
             }
             catch (Exception ex)
             {
-                throw;
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadGateway;
             }
         }
     }
