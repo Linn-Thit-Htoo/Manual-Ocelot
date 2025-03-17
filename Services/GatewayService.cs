@@ -101,13 +101,13 @@ namespace Manual_Ocelot.Services
                 var key = $"{hostPort.Host}:{hostPort.Port}";
                 if (!_activeConnections.ContainsKey(key))
                 {
-                    _activeConnections[key] = 0; // Initialize if not already present
+                    _activeConnections[key] = 0;
                 }
             }
 
             return downstreamHosts
-                .OrderBy(hostPort => _activeConnections[$"{hostPort.Host}:{hostPort.Port}"])  // Order by least active connections
-                .FirstOrDefault()!; // Select the one with the least active connections
+                .OrderBy(hostPort => _activeConnections[$"{hostPort.Host}:{hostPort.Port}"])
+                .FirstOrDefault()!;
         }
 
         private void IncrementActiveConnections(string host, int port)
