@@ -1,13 +1,13 @@
-﻿using Manual_Ocelot.Configurations;
+﻿using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using Manual_Ocelot.Configurations;
 using Manual_Ocelot.Constants;
 using Manual_Ocelot.Services.GatewayServices;
 using Manual_Ocelot.Services.TokenValidationServices;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Newtonsoft.Json;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 
 namespace Manual_Ocelot.Middlewares
 {
@@ -19,7 +19,9 @@ namespace Manual_Ocelot.Middlewares
 
         public GatewayMiddleware(IServiceScopeFactory serviceScopeFactory, RequestDelegate next)
         {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "ocelot.json") ?? throw new Exception("Ocelot JSON file not found.");
+            string filePath =
+                Path.Combine(Directory.GetCurrentDirectory(), "ocelot.json")
+                ?? throw new Exception("Ocelot JSON file not found.");
             _serviceScopeFactory = serviceScopeFactory;
 
             string jsonStr = File.ReadAllText(filePath);
@@ -36,8 +38,11 @@ namespace Manual_Ocelot.Middlewares
                 var scope = _serviceScopeFactory.CreateScope();
 
                 var route = _ocelot.Routes.FirstOrDefault(r =>
-                requestPath.StartsWith(r.UpstreamPathTemplate.Replace("{everything}", ""), StringComparison.OrdinalIgnoreCase) &&
-                r.UpstreamHttpMethod.Contains(requestMethod));
+                    requestPath.StartsWith(
+                        r.UpstreamPathTemplate.Replace("{everything}", ""),
+                        StringComparison.OrdinalIgnoreCase
+                    ) && r.UpstreamHttpMethod.Contains(requestMethod)
+                );
 
                 if (route is null)
                 {
@@ -60,9 +65,13 @@ namespace Manual_Ocelot.Middlewares
                     }
                 }
 
-                if (route.AuthenticationOptions.AllowedScopes is not null && route.AuthenticationOptions.AllowedScopes.Length > 0)
+                if (
+                    route.AuthenticationOptions.AllowedScopes is not null
+                    && route.AuthenticationOptions.AllowedScopes.Length > 0
+                )
                 {
-                    var tokenValidationService = scope.ServiceProvider.GetRequiredService<ITokenValidationService>();
+                    var tokenValidationService =
+                        scope.ServiceProvider.GetRequiredService<ITokenValidationService>();
 
                     var principal = tokenValidationService.ValidateToken(token);
                     if (principal is null)
@@ -72,7 +81,8 @@ namespace Manual_Ocelot.Middlewares
                     }
 
                     bool hasValidScope = route.AuthenticationOptions.AllowedScopes.All(scope =>
-                        principal.Claims.Any(c => c.Type == "scope" && c.Value == scope));
+                        principal.Claims.Any(c => c.Type == "scope" && c.Value == scope)
+                    );
 
                     if (!hasValidScope)
                     {
@@ -87,8 +97,16 @@ namespace Manual_Ocelot.Middlewares
 
                 response = route.LoadBalancerOptions.Type switch
                 {
-                    nameof(LoadBalancingConstant.RoundRobin) => await gatewayService.ProcessRoundRobinLoadBalancingRequest(httpContext, route),
-                    nameof(LoadBalancingConstant.LeastConnection) => await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route),
+                    nameof(LoadBalancingConstant.RoundRobin) =>
+                        await gatewayService.ProcessRoundRobinLoadBalancingRequest(
+                            httpContext,
+                            route
+                        ),
+                    nameof(LoadBalancingConstant.LeastConnection) =>
+                        await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(
+                            httpContext,
+                            route
+                        ),
                     _ => throw new Exception("Invalid Load Balancing Algorithm."),
                 };
 
