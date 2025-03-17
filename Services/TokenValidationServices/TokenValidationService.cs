@@ -1,10 +1,10 @@
-﻿using Manual_Ocelot.Configurations;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Manual_Ocelot.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Manual_Ocelot.Services.TokenValidationServices
 {
@@ -24,15 +24,14 @@ namespace Manual_Ocelot.Services.TokenValidationServices
                 JwtSecurityTokenHandler tokenHandler = new();
                 byte[] key = Encoding.ASCII.GetBytes(_setting.Jwt.Key);
 
-                TokenValidationParameters parameters =
-                    new()
-                    {
-                        RequireExpirationTime = true,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
-                    };
+                TokenValidationParameters parameters = new()
+                {
+                    RequireExpirationTime = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                };
                 ClaimsPrincipal principal = tokenHandler.ValidateToken(
                     token,
                     parameters,
