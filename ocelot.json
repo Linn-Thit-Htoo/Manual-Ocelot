@@ -1,0 +1,22 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5211"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5295
+        }
+      ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "DownstreamPathTemplate": "/api/Blog/{everything}",
+      "DownstreamScheme": "http"
+    }
+  ]
+}
