@@ -1,11 +1,11 @@
-﻿using Manual_Ocelot.Configurations;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Manual_Ocelot.Configurations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Manual_Ocelot.Controllers
 {
@@ -27,7 +27,7 @@ namespace Manual_Ocelot.Controllers
             {
                 List<Claim> claims = new List<Claim>()
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, "Lin Thit")
+                    new Claim(JwtRegisteredClaimNames.Sub, "Lin Thit"),
                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_setting.Jwt.Key));
                 var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
