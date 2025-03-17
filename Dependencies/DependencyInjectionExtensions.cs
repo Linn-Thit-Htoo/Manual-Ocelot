@@ -21,7 +21,7 @@ namespace Manual_Ocelot.Dependencies
                 .AddEnvironmentVariables();
 
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IGatewayService, GatewayService>();
+            builder.Services.AddSingleton<IGatewayService, GatewayService>();
             builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
             builder.Services.Configure<AppSetting>(builder.Configuration);
 
