@@ -5,5 +5,6 @@ namespace Manual_Ocelot.Services
     public interface IGatewayService
     {
         Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(HttpContext httpContext, Route route);
+        Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequest(HttpContext httpContext, Route route);
     }
 }

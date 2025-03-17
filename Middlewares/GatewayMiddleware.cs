@@ -44,14 +44,20 @@ namespace Manual_Ocelot.Middlewares
                 var scope = _serviceScopeFactory.CreateScope();
                 var gateway = scope.ServiceProvider.GetRequiredService<IGatewayService>();
 
+                HttpResponseMessage response = null!;
                 if (route.LoadBalancerOptions.Type.Equals(LoadBalancingConstant.RoundRobin))
                 {
-                    var downstreamResponse = await gateway.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
-
-                    httpContext.Response.StatusCode = (int)downstreamResponse.StatusCode;
-                    string response = await downstreamResponse.Content.ReadAsStringAsync();
-                    await httpContext.Response.WriteAsync(response);
+                    response = await gateway.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
                 }
+                else if (route.LoadBalancerOptions.Type.Equals(LoadBalancingConstant.LeastConnection))
+                {
+                    response = await gateway.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route);
+                }
+
+                httpContext.Response.StatusCode = (int)response!.StatusCode;
+                string jsonStr = await response.Content.ReadAsStringAsync();
+                await httpContext.Response.WriteAsync(jsonStr);
+                return;
             }
             catch (Exception ex)
             {
