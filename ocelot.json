@@ -16,7 +16,11 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/Blog/{everything}",
-      "DownstreamScheme": "http"
+      "DownstreamScheme": "http",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "admin" ]
+      }
     }
   ]
 }

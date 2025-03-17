@@ -1,5 +1,8 @@
+using Manual_Ocelot.Configurations;
+using Manual_Ocelot.Dependencies;
 using Manual_Ocelot.Middlewares;
-using Manual_Ocelot.Services;
+using Manual_Ocelot.Services.GatewayServices;
+using Manual_Ocelot.Services.TokenValidationServices;
 
 namespace Manual_Ocelot
 {
@@ -11,12 +14,11 @@ namespace Manual_Ocelot
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IGatewayService, GatewayService>();
+            builder.Services.AddDependencies(builder);
 
             var app = builder.Build();
 

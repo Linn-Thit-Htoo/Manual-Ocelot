@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Route = Manual_Ocelot.Configurations.Route;
 
-namespace Manual_Ocelot.Services
+namespace Manual_Ocelot.Services.GatewayServices
 {
     public class GatewayService : IGatewayService
     {

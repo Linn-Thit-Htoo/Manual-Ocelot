@@ -19,11 +19,18 @@
         public Loadbalanceroptions LoadBalancerOptions { get; set; }
         public string DownstreamPathTemplate { get; set; }
         public string DownstreamScheme { get; set; }
+        public Authenticationoptions AuthenticationOptions { get; set; }
     }
 
     public class Loadbalanceroptions
     {
         public string Type { get; set; }
+    }
+
+    public class Authenticationoptions
+    {
+        public string AuthenticationProviderKey { get; set; }
+        public string[] AllowedScopes { get; set; }
     }
 
     public class Downstreamhostandport
