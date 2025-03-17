@@ -4,7 +4,13 @@ namespace Manual_Ocelot.Services.GatewayServices
 {
     public interface IGatewayService
     {
-        Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(HttpContext httpContext, Route route);
-        Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequest(HttpContext httpContext, Route route);
+        Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(
+            HttpContext httpContext,
+            Route route
+        );
+        Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequest(
+            HttpContext httpContext,
+            Route route
+        );
     }
 }
