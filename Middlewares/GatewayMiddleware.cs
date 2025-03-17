@@ -43,17 +43,17 @@ namespace Manual_Ocelot.Middlewares
                 }
 
                 var scope = _serviceScopeFactory.CreateScope();
-                var gateway = scope.ServiceProvider.GetRequiredService<IGatewayService>();
+                var gatewayService = scope.ServiceProvider.GetRequiredService<IGatewayService>();
 
                 HttpResponseMessage response = null!;
 
                 switch (route.LoadBalancerOptions.Type)
                 {
                     case nameof(LoadBalancingConstant.RoundRobin):
-                        response = await gateway.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
+                        response = await gatewayService.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
                         break;
                     case nameof(LoadBalancingConstant.LeastConnection):
-                        response = await gateway.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route);
+                        response = await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route);
                         break;
                 }
 
