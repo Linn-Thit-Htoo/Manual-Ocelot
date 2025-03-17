@@ -47,15 +47,12 @@ namespace Manual_Ocelot.Middlewares
 
                 HttpResponseMessage response = null!;
 
-                switch (route.LoadBalancerOptions.Type)
+                response = route.LoadBalancerOptions.Type switch
                 {
-                    case nameof(LoadBalancingConstant.RoundRobin):
-                        response = await gatewayService.ProcessRoundRobinLoadBalancingRequest(httpContext, route);
-                        break;
-                    case nameof(LoadBalancingConstant.LeastConnection):
-                        response = await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route);
-                        break;
-                }
+                    nameof(LoadBalancingConstant.RoundRobin) => await gatewayService.ProcessRoundRobinLoadBalancingRequest(httpContext, route),
+                    nameof(LoadBalancingConstant.LeastConnection) => await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(httpContext, route),
+                    _ => throw new Exception("Invalid Load Balancing Algorithm."),
+                };
 
                 httpContext.Response.StatusCode = (int)response!.StatusCode;
                 string jsonStr = await response.Content.ReadAsStringAsync();
