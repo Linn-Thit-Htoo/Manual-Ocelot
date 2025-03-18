@@ -13,6 +13,7 @@ public class GatewayMiddleware
     private readonly RequestDelegate _next;
     private readonly Ocelot _ocelot;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ILogger<GatewayMiddleware> _logger;
 
     public GatewayMiddleware(
         IServiceScopeFactory serviceScopeFactory,
@@ -148,6 +149,7 @@ public class GatewayMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Downstream error: {ex.ToString()}");
             httpContext.Response.StatusCode = (int)HttpStatusCode.BadGateway;
         }
     }
