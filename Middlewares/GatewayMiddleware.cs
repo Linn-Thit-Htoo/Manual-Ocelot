@@ -94,10 +94,7 @@ public class GatewayMiddleware
             response = route.LoadBalancerOptions.Type switch
             {
                 nameof(LoadBalancingConstant.RoundRobin) =>
-                    await gatewayService.ProcessRoundRobinLoadBalancingRequest(
-                        httpContext,
-                        route
-                    ),
+                    await gatewayService.ProcessRoundRobinLoadBalancingRequest(httpContext, route),
                 nameof(LoadBalancingConstant.LeastConnection) =>
                     await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(
                         httpContext,
