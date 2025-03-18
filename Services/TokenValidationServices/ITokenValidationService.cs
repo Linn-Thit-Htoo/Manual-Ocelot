@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace Manual_Ocelot.Services.TokenValidationServices
+namespace Manual_Ocelot.Services.TokenValidationServices;
+
+public interface ITokenValidationService
 {
-    public interface ITokenValidationService
-    {
-        ClaimsPrincipal ValidateToken(string token);
-    }
+    ClaimsPrincipal ValidateToken(string token);
 }
