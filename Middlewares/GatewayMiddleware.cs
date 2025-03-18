@@ -1,12 +1,8 @@
-﻿using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net;
 using Manual_Ocelot.Configurations;
 using Manual_Ocelot.Constants;
 using Manual_Ocelot.Services.GatewayServices;
 using Manual_Ocelot.Services.TokenValidationServices;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Newtonsoft.Json;
 
 namespace Manual_Ocelot.Middlewares;
