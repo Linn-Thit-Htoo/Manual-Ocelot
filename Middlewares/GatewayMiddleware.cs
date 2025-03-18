@@ -47,7 +47,10 @@ public class GatewayMiddleware
                 return;
             }
 
-            if (route.AuthenticationOptions is not null && route.AuthenticationOptions.AuthenticationProviderKey is not null)
+            if (
+                route.AuthenticationOptions is not null
+                && route.AuthenticationOptions.AuthenticationProviderKey is not null
+            )
             {
                 #region Check Auth
 
