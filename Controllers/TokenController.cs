@@ -6,43 +6,42 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Manual_Ocelot.Controllers
+namespace Manual_Ocelot.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class TokenController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TokenController : ControllerBase
+    private readonly AppSetting _setting;
+
+    public TokenController(IOptions<AppSetting> options)
     {
-        private readonly AppSetting _setting;
+        _setting = options.Value;
+    }
 
-        public TokenController(IOptions<AppSetting> options)
+    [HttpPost("GetToken")]
+    public IActionResult GetToken()
+    {
+        try
         {
-            _setting = options.Value;
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, "Lin Thit"),
+            };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_setting.Jwt.Key));
+            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            JwtSecurityToken? jwtSecurityToken = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(10),
+                signingCredentials: signIn
+            );
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            return Ok(token);
         }
-
-        [HttpPost("GetToken")]
-        public IActionResult GetToken()
+        catch (Exception ex)
         {
-            try
-            {
-                List<Claim> claims = new List<Claim>()
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, "Lin Thit"),
-                };
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_setting.Jwt.Key));
-                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                JwtSecurityToken? jwtSecurityToken = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddHours(10),
-                    signingCredentials: signIn
-                );
-
-                var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-                return Ok(token);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            throw new Exception(ex.Message);
         }
     }
 }
