@@ -13,11 +13,22 @@ public class GatewayMiddleware
     private readonly Ocelot _ocelot;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public GatewayMiddleware(IServiceScopeFactory serviceScopeFactory, RequestDelegate next)
+    public GatewayMiddleware(
+        IServiceScopeFactory serviceScopeFactory,
+        RequestDelegate next,
+        IWebHostEnvironment webHostEnvironment
+    )
     {
-        string filePath =
-            Path.Combine(Directory.GetCurrentDirectory(), "ocelot.json")
-            ?? throw new Exception("Ocelot JSON file not found.");
+        string filePath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            $"ocelot.{webHostEnvironment!.EnvironmentName}.json"
+        );
+
+        if (!File.Exists(filePath))
+        {
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "ocelot.json");
+        }
+
         _serviceScopeFactory = serviceScopeFactory;
 
         string jsonStr = File.ReadAllText(filePath);
