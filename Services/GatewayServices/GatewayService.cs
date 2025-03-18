@@ -1,7 +1,5 @@
 ﻿using System.Text;
 using Manual_Ocelot.Configurations;
-using Manual_Ocelot.Constants;
-using Newtonsoft.Json;
 using Route = Manual_Ocelot.Configurations.Route;
 
 namespace Manual_Ocelot.Services.GatewayServices
