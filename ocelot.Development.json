@@ -1,0 +1,28 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5211",
+    "JwtKey": "sample-key"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "localhost",
+      //    "Port": 5295
+      //  }
+      //],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/Blog/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "blog",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "admin" ]
+      }
+    }
+  ]
+}
