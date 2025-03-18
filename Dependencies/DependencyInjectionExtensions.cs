@@ -20,7 +20,10 @@ public static class DependencyInjectionExtensions
             )
             .AddEnvironmentVariables();
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().AddJsonOptions(opt =>
+        {
+            opt.JsonSerializerOptions.PropertyNamingPolicy = null;
+        });
         builder.Services.AddSingleton<IGatewayService, GatewayService>();
         builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
         builder.Services.Configure<AppSetting>(builder.Configuration);
