@@ -1,5 +1,4 @@
 using Manual_Ocelot.Dependencies;
-using Manual_Ocelot.Middlewares;
 
 namespace Manual_Ocelot;
 
