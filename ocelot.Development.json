@@ -7,6 +7,7 @@
     {
       "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
       "UpstreamHttpMethod": [ "GET" , "POST" , "PUT" , "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
