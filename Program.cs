@@ -1,8 +1,5 @@
-using Manual_Ocelot.Configurations;
 using Manual_Ocelot.Dependencies;
 using Manual_Ocelot.Middlewares;
-using Manual_Ocelot.Services.GatewayServices;
-using Manual_Ocelot.Services.TokenValidationServices;
 
 namespace Manual_Ocelot
 {
