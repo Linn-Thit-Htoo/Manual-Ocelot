@@ -47,44 +47,59 @@ public class GatewayMiddleware
                 return;
             }
 
-            string authHeader = httpContext.Request.Headers["Authorization"]!;
-            string[] header_and_token = authHeader.Split(' ');
-            string header = header_and_token[0];
-            string token = header_and_token[1];
-
-            if (route.AuthenticationOptions.AuthenticationProviderKey is not null)
+            if (route.AuthenticationOptions is not null && route.AuthenticationOptions.AuthenticationProviderKey is not null)
             {
-                if (authHeader is null || !header.StartsWith("Bearer"))
-                {
-                    httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    return;
-                }
-            }
+                #region Check Auth
 
-            if (
-                route.AuthenticationOptions.AllowedScopes is not null
-                && route.AuthenticationOptions.AllowedScopes.Length > 0
-            )
-            {
-                var tokenValidationService =
-                    scope.ServiceProvider.GetRequiredService<ITokenValidationService>();
+                string authHeader = httpContext.Request.Headers["Authorization"]!;
 
-                var principal = tokenValidationService.ValidateToken(token);
-                if (principal is null)
+                if (authHeader is null)
                 {
                     httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
 
-                bool hasValidScope = route.AuthenticationOptions.AllowedScopes.All(scope =>
-                    principal.Claims.Any(c => c.Type == "scope" && c.Value == scope)
-                );
+                string[] header_and_token = authHeader.Split(' ');
+                string header = header_and_token[0];
+                string token = header_and_token[1];
 
-                if (!hasValidScope)
+                if (!header.StartsWith("Bearer"))
                 {
-                    httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
+
+                #endregion
+
+                #region Allowed Scopes
+
+                if (
+                    route.AuthenticationOptions.AllowedScopes is not null
+                    && route.AuthenticationOptions.AllowedScopes.Length > 0
+                )
+                {
+                    var tokenValidationService =
+                        scope.ServiceProvider.GetRequiredService<ITokenValidationService>();
+
+                    var principal = tokenValidationService.ValidateToken(token);
+                    if (principal is null)
+                    {
+                        httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return;
+                    }
+
+                    bool hasValidScope = route.AuthenticationOptions.AllowedScopes.All(scope =>
+                        principal.Claims.Any(c => c.Type == "scope" && c.Value == scope)
+                    );
+
+                    if (!hasValidScope)
+                    {
+                        httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        return;
+                    }
+                }
+
+                #endregion
             }
 
             var gatewayService = scope.ServiceProvider.GetRequiredService<IGatewayService>();

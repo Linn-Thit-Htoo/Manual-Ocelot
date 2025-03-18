@@ -24,6 +24,7 @@ public static class DependencyInjectionExtensions
         builder.Services.AddSingleton<IGatewayService, GatewayService>();
         builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
         builder.Services.Configure<AppSetting>(builder.Configuration);
+        builder.Services.AddHttpClient();
 
         return services;
     }

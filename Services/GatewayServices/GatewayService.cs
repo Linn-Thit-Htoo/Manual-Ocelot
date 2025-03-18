@@ -9,6 +9,16 @@ public class GatewayService : IGatewayService
     private static readonly object _lock = new();
     private static int _lastUsedIndex = 0;
     private readonly Dictionary<string, int> _activeConnections = new();
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    public GatewayService(IServiceScopeFactory serviceScopeFactory)
+    {
+        _serviceScopeFactory = serviceScopeFactory;
+
+        var scope = _serviceScopeFactory.CreateScope();
+        _httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
+    }
 
     public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(
         HttpContext httpContext,
@@ -52,7 +62,7 @@ public class GatewayService : IGatewayService
                 );
             }
 
-            HttpClient httpClient = new();
+            HttpClient httpClient = _httpClientFactory.CreateClient();
             var downstreamResponse = await httpClient.SendAsync(downstreamRequest);
 
             return downstreamResponse;
@@ -103,7 +113,7 @@ public class GatewayService : IGatewayService
                 );
             }
 
-            HttpClient httpClient = new();
+            HttpClient httpClient = _httpClientFactory.CreateClient();
             var downstreamResponse = await httpClient.SendAsync(downstreamRequest);
 
             DecrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
