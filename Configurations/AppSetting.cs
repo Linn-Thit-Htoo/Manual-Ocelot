@@ -2,8 +2,14 @@
 
 public class AppSetting
 {
+    public Connectionstrings ConnectionStrings { get; set; }
     public Logging Logging { get; set; }
     public Jwt Jwt { get; set; }
+}
+
+public class Connectionstrings
+{
+    public string DbConnection { get; set; }
 }
 
 public class Logging
