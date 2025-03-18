@@ -29,10 +29,7 @@ public class GatewayService : IGatewayService
             int downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
 
             string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
-            string downstreamBasePath = route.DownstreamPathTemplate.Replace(
-                "{everything}",
-                ""
-            );
+            string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
 
             string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
 
@@ -83,10 +80,7 @@ public class GatewayService : IGatewayService
             IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
 
             string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
-            string downstreamBasePath = route.DownstreamPathTemplate.Replace(
-                "{everything}",
-                ""
-            );
+            string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
 
             string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
 
