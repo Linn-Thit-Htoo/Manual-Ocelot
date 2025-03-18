@@ -1,6 +1,7 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5211"
+    "BaseUrl": "http://localhost:5211",
+    "JwtKey": "sample-key"
   },
   "Routes": [
     {
@@ -17,11 +18,11 @@
       },
       "DownstreamPathTemplate": "/api/Blog/{everything}",
       "DownstreamScheme": "http",
-      "ServiceName": "blog"
-      //"AuthenticationOptions": {
-      //  "AuthenticationProviderKey": "Bearer",
-      //  "AllowedScopes": [ "admin" ]
-      //}
+      "ServiceName": "blog",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "admin" ]
+      }
     }
   ]
 }

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Manual_Ocelot.Configurations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,13 +17,11 @@ public class TokenValidationService : ITokenValidationService
         _setting = options.Value;
     }
 
-    public ClaimsPrincipal ValidateToken(string token)
+    public ClaimsPrincipal ValidateToken(byte[] key, string token)
     {
         try
         {
             JwtSecurityTokenHandler tokenHandler = new();
-            byte[] key = Encoding.ASCII.GetBytes(_setting.Jwt.Key);
-
             TokenValidationParameters parameters = new()
             {
                 RequireExpirationTime = true,

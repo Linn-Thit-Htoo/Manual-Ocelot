@@ -9,6 +9,7 @@ public class Ocelot
 public class Globalconfiguration
 {
     public string BaseUrl { get; set; }
+    public string? JwtKey { get; set; }
 }
 
 public class Route

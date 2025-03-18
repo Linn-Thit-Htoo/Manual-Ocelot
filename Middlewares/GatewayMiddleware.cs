@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text;
 using Manual_Ocelot.Configurations;
 using Manual_Ocelot.Constants;
 using Manual_Ocelot.Services.GatewayServices;
@@ -92,10 +93,15 @@ public class GatewayMiddleware
                     && route.AuthenticationOptions.AllowedScopes.Length > 0
                 )
                 {
+                    string key =
+                        _ocelot.GlobalConfiguration.JwtKey!
+                        ?? throw new Exception("Jwt Key Not Found.");
+                    byte[] jwtKey = Encoding.ASCII.GetBytes(key);
+
                     var tokenValidationService =
                         scope.ServiceProvider.GetRequiredService<ITokenValidationService>();
 
-                    var principal = tokenValidationService.ValidateToken(token);
+                    var principal = tokenValidationService.ValidateToken(jwtKey, token);
                     if (principal is null)
                     {
                         httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -123,7 +129,10 @@ public class GatewayMiddleware
             response = route.LoadBalancerOptions.Type switch
             {
                 nameof(LoadBalancingConstant.RoundRobin) =>
-                    await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(httpContext, route),
+                    await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(
+                        httpContext,
+                        route
+                    ),
                 nameof(LoadBalancingConstant.LeastConnection) =>
                     await gatewayService.ProcesssLeastConnectionLoadBalancingRequestV1(
                         httpContext,

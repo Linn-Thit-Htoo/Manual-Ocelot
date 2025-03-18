@@ -4,5 +4,5 @@ namespace Manual_Ocelot.Services.TokenValidationServices;
 
 public interface ITokenValidationService
 {
-    ClaimsPrincipal ValidateToken(string token);
+    ClaimsPrincipal ValidateToken(byte[] key, string token);
 }
