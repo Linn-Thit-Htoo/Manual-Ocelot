@@ -38,7 +38,7 @@ public class GatewayService : IGatewayService
 
             lock (_lock)
             {
-                _lastUsedIndex = (_lastUsedIndex + 1) % route.DownstreamHostAndPorts.Count;
+                _lastUsedIndex = (_lastUsedIndex + 1) % route.DownstreamHostAndPorts!.Count;
             }
 
             string downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
