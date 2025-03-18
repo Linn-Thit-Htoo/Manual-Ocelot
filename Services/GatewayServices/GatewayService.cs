@@ -51,6 +51,10 @@ public class GatewayService : IGatewayService
 
             string downstreamUrl =
                 $"{route.DownstreamScheme}://{downstreamHost}:{downstreamPort}{downstreamPath}";
+            if (httpContext.Request.QueryString.HasValue)
+            {
+                downstreamUrl += httpContext.Request.QueryString;
+            }
 
             var downstreamRequest = new HttpRequestMessage(
                 new HttpMethod(requestMethod),
@@ -120,6 +124,10 @@ public class GatewayService : IGatewayService
 
             string downstreamUrl =
                 $"{route.DownstreamScheme}://{downstreamHost}:{downstreamPort}{downstreamPath}";
+            if (httpContext.Request.QueryString.HasValue)
+            {
+                downstreamUrl += httpContext.Request.QueryString;
+            }
 
             var downstreamRequest = new HttpRequestMessage(
                 new HttpMethod(requestMethod),
@@ -171,6 +179,10 @@ public class GatewayService : IGatewayService
 
             string downstreamUrl =
                 $"{route.DownstreamScheme}://{leastConnectionHost.Host}:{leastConnectionHost.Port}{downstreamPath}";
+            if (httpContext.Request.QueryString.HasValue)
+            {
+                downstreamUrl += httpContext.Request.QueryString;
+            }
 
             var downstreamRequest = new HttpRequestMessage(
                 new HttpMethod(requestMethod),
@@ -238,6 +250,10 @@ public class GatewayService : IGatewayService
 
             string downstreamUrl =
                 $"{route.DownstreamScheme}://{leastConnectionHost.Host}:{leastConnectionHost.Port}{downstreamPath}";
+            if (httpContext.Request.QueryString.HasValue)
+            {
+                downstreamUrl += httpContext.Request.QueryString;
+            }
 
             var downstreamRequest = new HttpRequestMessage(
                 new HttpMethod(requestMethod),
