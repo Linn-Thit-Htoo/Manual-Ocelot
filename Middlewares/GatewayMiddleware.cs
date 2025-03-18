@@ -125,7 +125,7 @@ public class GatewayMiddleware
                 nameof(LoadBalancingConstant.RoundRobin) =>
                     await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(httpContext, route),
                 nameof(LoadBalancingConstant.LeastConnection) =>
-                    await gatewayService.ProcesssLeastConnectionLoadBalancingRequest(
+                    await gatewayService.ProcesssLeastConnectionLoadBalancingRequestV1(
                         httpContext,
                         route
                     ),

@@ -15,7 +15,10 @@ public class GatewayService : IGatewayService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly AppDbContext _appDbContext;
 
-    public GatewayService(IHttpClientFactory httpClientFactory, IServiceScopeFactory serviceScopeFactory)
+    public GatewayService(
+        IHttpClientFactory httpClientFactory,
+        IServiceScopeFactory serviceScopeFactory
+    )
     {
         _httpClientFactory = httpClientFactory;
 
@@ -91,8 +94,8 @@ public class GatewayService : IGatewayService
 
             if (!string.IsNullOrEmpty(route.ServiceName))
             {
-                var instances = await _appDbContext.Tbl_ServiceRegistries
-                    .AsNoTracking()
+                var instances = await _appDbContext
+                    .Tbl_ServiceRegistries.AsNoTracking()
                     .Where(x => x.ServiceName == route.ServiceName)
                     .ToListAsync();
 
@@ -103,7 +106,8 @@ public class GatewayService : IGatewayService
             }
             else
             {
-                _lastUsedIndex = Interlocked.Increment(ref _lastUsedIndex) % route.DownstreamHostAndPorts!.Count;
+                _lastUsedIndex =
+                    Interlocked.Increment(ref _lastUsedIndex) % route.DownstreamHostAndPorts!.Count;
 
                 downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
                 downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
@@ -207,14 +211,23 @@ public class GatewayService : IGatewayService
             var requestPath = httpContext.Request.Path.ToString();
             var requestMethod = httpContext.Request.Method;
 
-            var leastConnectionHost =
-                GetLeastConnectionDownstreamHost(route.DownstreamHostAndPorts!)
-                ?? throw new Exception("Unexpected error occured.");
+            Downstreamhostandport? leastConnectionHost = null;
 
-            var instances = await _appDbContext.Tbl_ServiceRegistries
-                .AsNoTracking()
-                .Where(x => x.ServiceName == route.ServiceName)
-                .ToListAsync();
+            if (!string.IsNullOrEmpty(route.ServiceName))
+            {
+                leastConnectionHost = await GetLeastConnectionDownstreamHostFromServiceRegistry(
+                    route.ServiceName
+                );
+            }
+            else if (route.DownstreamHostAndPorts is { Count: > 0 })
+            {
+                leastConnectionHost = GetLeastConnectionDownstreamHost(
+                    route.DownstreamHostAndPorts
+                );
+            }
+
+            if (leastConnectionHost == null)
+                throw new Exception("No available downstream instances.");
 
             IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
 
@@ -290,5 +303,29 @@ public class GatewayService : IGatewayService
         {
             _activeConnections[key]--;
         }
+    }
+
+    private async Task<Downstreamhostandport?> GetLeastConnectionDownstreamHostFromServiceRegistry(
+        string serviceName
+    )
+    {
+        var instances = await _appDbContext
+            .Tbl_ServiceRegistries.AsNoTracking()
+            .Where(x => x.ServiceName == serviceName)
+            .Select(x => new Downstreamhostandport { Host = x.Host, Port = x.Port })
+            .ToListAsync();
+
+        if (instances.Count <= 0)
+            return null;
+
+        foreach (var instance in instances)
+        {
+            var key = $"{instance.Host}:{instance.Port}";
+            _activeConnections.TryAdd(key, 0);
+        }
+
+        return instances
+            .OrderBy(instance => _activeConnections[$"{instance.Host}:{instance.Port}"])
+            .FirstOrDefault();
     }
 }

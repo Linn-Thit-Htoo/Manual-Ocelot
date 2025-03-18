@@ -13,7 +13,7 @@
       //  }
       //],
       "LoadBalancerOptions": {
-        "Type": "RoundRobin"
+        "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/Blog/{everything}",
       "DownstreamScheme": "http",
