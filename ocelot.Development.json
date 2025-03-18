@@ -5,18 +5,18 @@
   },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/api/gateway/BlogEFCore/{everything}",
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5027
+          "Port": 5136
         }
       ],
       "LoadBalancerOptions": {
         "Type": "RoundRobin"
       },
-      "DownstreamPathTemplate": "/api/BlogEFCore/{everything}",
+      "DownstreamPathTemplate": "/api/Blog/{everything}",
       "DownstreamScheme": "http"
       //"ServiceName": "blog"
       //"AuthenticationOptions": {
