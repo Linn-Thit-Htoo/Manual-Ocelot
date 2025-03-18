@@ -226,7 +226,7 @@ public class GatewayService : IGatewayService
                 );
             }
 
-            if (leastConnectionHost == null)
+            if (leastConnectionHost is null)
                 throw new Exception("No available downstream instances.");
 
             IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
