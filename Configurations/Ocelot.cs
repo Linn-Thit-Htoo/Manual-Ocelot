@@ -15,11 +15,12 @@ public class Route
 {
     public string UpstreamPathTemplate { get; set; }
     public string[] UpstreamHttpMethod { get; set; }
-    public List<Downstreamhostandport> DownstreamHostAndPorts { get; set; }
+    public List<Downstreamhostandport>? DownstreamHostAndPorts { get; set; }
     public Loadbalanceroptions LoadBalancerOptions { get; set; }
     public string DownstreamPathTemplate { get; set; }
     public string DownstreamScheme { get; set; }
     public Authenticationoptions AuthenticationOptions { get; set; }
+    public string? ServiceName { get; set; }
 }
 
 public class Loadbalanceroptions

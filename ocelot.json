@@ -6,17 +6,18 @@
     {
       "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
       "UpstreamHttpMethod": [ "GET" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5295
-        }
-      ],
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "localhost",
+      //    "Port": 5295
+      //  }
+      //],
       "LoadBalancerOptions": {
-        "Type": "LeastConnection"
+        "Type": "RoundRobin"
       },
       "DownstreamPathTemplate": "/api/Blog/{everything}",
-      "DownstreamScheme": "http"
+      "DownstreamScheme": "http",
+      "ServiceName": "blog"
       //"AuthenticationOptions": {
       //  "AuthenticationProviderKey": "Bearer",
       //  "AllowedScopes": [ "admin" ]

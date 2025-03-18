@@ -1,5 +1,8 @@
-﻿using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Text;
 using Manual_Ocelot.Configurations;
+using Manual_Ocelot.Entities;
+using Microsoft.EntityFrameworkCore;
 using Route = Manual_Ocelot.Configurations.Route;
 
 namespace Manual_Ocelot.Services.GatewayServices;
@@ -8,12 +11,16 @@ public class GatewayService : IGatewayService
 {
     private static readonly object _lock = new();
     private static int _lastUsedIndex = 0;
-    private readonly Dictionary<string, int> _activeConnections = new();
+    private readonly ConcurrentDictionary<string, int> _activeConnections = new();
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly AppDbContext _appDbContext;
 
-    public GatewayService(IHttpClientFactory httpClientFactory)
+    public GatewayService(IHttpClientFactory httpClientFactory, IServiceScopeFactory serviceScopeFactory)
     {
         _httpClientFactory = httpClientFactory;
+
+        var scope = serviceScopeFactory.CreateScope();
+        _appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
     public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(
@@ -69,6 +76,74 @@ public class GatewayService : IGatewayService
         }
     }
 
+    public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequestV1(
+        HttpContext httpContext,
+        Route route
+    )
+    {
+        try
+        {
+            var requestPath = httpContext.Request.Path.ToString();
+            var requestMethod = httpContext.Request.Method;
+
+            string downstreamHost = string.Empty;
+            int downstreamPort = default;
+
+            if (!string.IsNullOrEmpty(route.ServiceName))
+            {
+                var instances = await _appDbContext.Tbl_ServiceRegistries
+                    .AsNoTracking()
+                    .Where(x => x.ServiceName == route.ServiceName)
+                    .ToListAsync();
+
+                _lastUsedIndex = Interlocked.Increment(ref _lastUsedIndex) % instances.Count;
+
+                downstreamHost = instances[_lastUsedIndex].Host;
+                downstreamPort = instances[_lastUsedIndex].Port;
+            }
+            else
+            {
+                _lastUsedIndex = Interlocked.Increment(ref _lastUsedIndex) % route.DownstreamHostAndPorts!.Count;
+
+                downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
+                downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
+            }
+
+            string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
+            string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
+
+            string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
+
+            string downstreamUrl =
+                $"{route.DownstreamScheme}://{downstreamHost}:{downstreamPort}{downstreamPath}";
+
+            var downstreamRequest = new HttpRequestMessage(
+                new HttpMethod(requestMethod),
+                downstreamUrl
+            );
+
+            if (httpContext.Request.Body.CanRead)
+            {
+                using var reader = new StreamReader(httpContext.Request.Body);
+                var body = await reader.ReadToEndAsync();
+                downstreamRequest.Content = new StringContent(
+                    body,
+                    Encoding.UTF8,
+                    "application/json"
+                );
+            }
+
+            HttpClient httpClient = _httpClientFactory.CreateClient();
+            HttpResponseMessage downstreamResponse = await httpClient.SendAsync(downstreamRequest);
+
+            return downstreamResponse;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
     public async Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequest(
         HttpContext httpContext,
         Route route
@@ -80,8 +155,66 @@ public class GatewayService : IGatewayService
             var requestMethod = httpContext.Request.Method;
 
             var leastConnectionHost =
-                GetLeastConnectionDownstreamHost(route.DownstreamHostAndPorts)
+                GetLeastConnectionDownstreamHost(route.DownstreamHostAndPorts!)
                 ?? throw new Exception("Unexpected error occured.");
+
+            IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
+
+            string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
+            string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
+
+            string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
+
+            string downstreamUrl =
+                $"{route.DownstreamScheme}://{leastConnectionHost.Host}:{leastConnectionHost.Port}{downstreamPath}";
+
+            var downstreamRequest = new HttpRequestMessage(
+                new HttpMethod(requestMethod),
+                downstreamUrl
+            );
+
+            if (httpContext.Request.Body.CanRead)
+            {
+                using var reader = new StreamReader(httpContext.Request.Body);
+                var body = await reader.ReadToEndAsync();
+                downstreamRequest.Content = new StringContent(
+                    body,
+                    Encoding.UTF8,
+                    "application/json"
+                );
+            }
+
+            HttpClient httpClient = _httpClientFactory.CreateClient();
+            var downstreamResponse = await httpClient.SendAsync(downstreamRequest);
+
+            DecrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
+
+            return downstreamResponse;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    public async Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequestV1(
+        HttpContext httpContext,
+        Route route
+    )
+    {
+        try
+        {
+            var requestPath = httpContext.Request.Path.ToString();
+            var requestMethod = httpContext.Request.Method;
+
+            var leastConnectionHost =
+                GetLeastConnectionDownstreamHost(route.DownstreamHostAndPorts!)
+                ?? throw new Exception("Unexpected error occured.");
+
+            var instances = await _appDbContext.Tbl_ServiceRegistries
+                .AsNoTracking()
+                .Where(x => x.ServiceName == route.ServiceName)
+                .ToListAsync();
 
             IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
 
