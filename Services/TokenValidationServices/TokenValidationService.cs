@@ -5,44 +5,43 @@ using Manual_Ocelot.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Manual_Ocelot.Services.TokenValidationServices
+namespace Manual_Ocelot.Services.TokenValidationServices;
+
+public class TokenValidationService : ITokenValidationService
 {
-    public class TokenValidationService : ITokenValidationService
+    private readonly AppSetting _setting;
+
+    public TokenValidationService(IOptions<AppSetting> options)
     {
-        private readonly AppSetting _setting;
+        _setting = options.Value;
+    }
 
-        public TokenValidationService(IOptions<AppSetting> options)
+    public ClaimsPrincipal ValidateToken(string token)
+    {
+        try
         {
-            _setting = options.Value;
+            JwtSecurityTokenHandler tokenHandler = new();
+            byte[] key = Encoding.ASCII.GetBytes(_setting.Jwt.Key);
+
+            TokenValidationParameters parameters = new()
+            {
+                RequireExpirationTime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+            };
+            ClaimsPrincipal principal = tokenHandler.ValidateToken(
+                token,
+                parameters,
+                out SecurityToken securityToken
+            );
+
+            return principal;
         }
-
-        public ClaimsPrincipal ValidateToken(string token)
+        catch (Exception ex)
         {
-            try
-            {
-                JwtSecurityTokenHandler tokenHandler = new();
-                byte[] key = Encoding.ASCII.GetBytes(_setting.Jwt.Key);
-
-                TokenValidationParameters parameters = new()
-                {
-                    RequireExpirationTime = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                };
-                ClaimsPrincipal principal = tokenHandler.ValidateToken(
-                    token,
-                    parameters,
-                    out SecurityToken securityToken
-                );
-
-                return principal;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            throw;
         }
     }
 }
