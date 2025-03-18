@@ -10,14 +10,10 @@ public class GatewayService : IGatewayService
     private static int _lastUsedIndex = 0;
     private readonly Dictionary<string, int> _activeConnections = new();
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public GatewayService(IServiceScopeFactory serviceScopeFactory)
+    public GatewayService(IHttpClientFactory httpClientFactory)
     {
-        _serviceScopeFactory = serviceScopeFactory;
-
-        var scope = _serviceScopeFactory.CreateScope();
-        _httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(
