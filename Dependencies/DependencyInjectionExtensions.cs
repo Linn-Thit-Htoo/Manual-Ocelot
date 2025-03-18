@@ -1,5 +1,6 @@
 ﻿using Manual_Ocelot.Configurations;
 using Manual_Ocelot.Entities;
+using Manual_Ocelot.Middlewares;
 using Manual_Ocelot.Services.GatewayServices;
 using Manual_Ocelot.Services.TokenValidationServices;
 using Microsoft.EntityFrameworkCore;
@@ -38,5 +39,10 @@ public static class DependencyInjectionExtensions
         builder.Services.AddHttpClient();
 
         return services;
+    }
+
+    public static IApplicationBuilder AddApiGateway(this WebApplication app)
+    {
+        return app.UseMiddleware<GatewayMiddleware>();
     }
 }

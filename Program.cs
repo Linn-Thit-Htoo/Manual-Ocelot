@@ -24,7 +24,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        app.UseMiddleware<GatewayMiddleware>();
+        app.AddApiGateway();
 
         app.UseAuthorization();
 
