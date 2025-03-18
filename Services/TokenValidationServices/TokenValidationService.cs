@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Text;
 using Manual_Ocelot.Configurations;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
