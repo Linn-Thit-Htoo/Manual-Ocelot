@@ -2,6 +2,6 @@
 
 public class LoadBalancingConstant
 {
-    public static string RoundRobin { get; } = "RoundRobin";
-    public static string LeastConnection { get; } = "LeastConnection";
+    internal static string RoundRobin { get; } = "RoundRobin";
+    internal static string LeastConnection { get; } = "LeastConnection";
 }
