@@ -7,22 +7,22 @@
     {
       "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
       "UpstreamHttpMethod": [ "GET" , "POST" , "PUT" , "DELETE"],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5136
-        }
-      ],
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "localhost",
+      //    "Port": 5136
+      //  }
+      //],
       "LoadBalancerOptions": {
         "Type": "RoundRobin"
       },
       "DownstreamPathTemplate": "/api/Blog/{everything}",
-      "DownstreamScheme": "http"
-      //"ServiceName": "blog"
-      //"AuthenticationOptions": {
-      //  "AuthenticationProviderKey": "Bearer",
-      //  "AllowedScopes": [ "admin" ]
-      //}
+      "DownstreamScheme": "http",
+      "ServiceName": "blog",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "admin" ]
+      }
     }
   ]
 }
