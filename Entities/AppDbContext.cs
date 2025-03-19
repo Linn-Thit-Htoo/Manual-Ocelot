@@ -1,13 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace Manual_Ocelot.Entities;
 
-namespace Manual_Ocelot.Entities
+public class AppDbContext : DbContext
 {
-    public class AppDbContext : DbContext
-    {
-        public AppDbContext(DbContextOptions options) : base(options)
-        {
-        }
+    public AppDbContext(DbContextOptions options)
+        : base(options) { }
 
-        public DbSet<Tbl_ServiceRegistry> Tbl_ServiceRegistries { get; set; }
-    }
+    public DbSet<Tbl_ServiceRegistry> Tbl_ServiceRegistries { get; set; }
 }
