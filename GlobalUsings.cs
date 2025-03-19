@@ -11,3 +11,6 @@ global using Newtonsoft.Json;
 global using System.Collections.Concurrent;
 global using Route = Manual_Ocelot.Configurations.Route;
 global using System.Security.Claims;
+global using System.IdentityModel.Tokens.Jwt;
+global using Microsoft.Extensions.Options;
+global using Microsoft.IdentityModel.Tokens;

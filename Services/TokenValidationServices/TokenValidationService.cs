@@ -1,8 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-
-namespace Manual_Ocelot.Services.TokenValidationServices;
+﻿namespace Manual_Ocelot.Services.TokenValidationServices;
 
 public class TokenValidationService : ITokenValidationService
 {
