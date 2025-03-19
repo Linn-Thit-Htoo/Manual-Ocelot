@@ -14,14 +14,15 @@ public class TokenValidationService : ITokenValidationService
         try
         {
             JwtSecurityTokenHandler tokenHandler = new();
-            TokenValidationParameters parameters = new()
-            {
-                RequireExpirationTime = true,
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-            };
+            TokenValidationParameters parameters =
+                new()
+                {
+                    RequireExpirationTime = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                };
             ClaimsPrincipal principal = tokenHandler.ValidateToken(
                 token,
                 parameters,
