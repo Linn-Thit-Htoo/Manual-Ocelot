@@ -127,6 +127,8 @@ public class GatewayMiddleware
 
             HttpResponseMessage response = null!;
 
+            #region Load Balancing
+
             response = route.LoadBalancerOptions.Type switch
             {
                 nameof(LoadBalancingConstant.RoundRobin) =>
@@ -142,9 +144,12 @@ public class GatewayMiddleware
                 _ => throw new Exception("Invalid Load Balancing Algorithm."),
             };
 
+            #endregion
+
             httpContext.Response.StatusCode = (int)response!.StatusCode;
             string jsonStr = await response.Content.ReadAsStringAsync();
             await httpContext.Response.WriteAsync(jsonStr);
+
             return;
         }
         catch (Exception ex)
