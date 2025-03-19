@@ -16,10 +16,12 @@ public static class DependencyInjectionExtensions
             )
             .AddEnvironmentVariables();
 
-        builder.Services.AddControllers().AddJsonOptions(opt =>
-        {
-            opt.JsonSerializerOptions.PropertyNamingPolicy = null;
-        });
+        builder
+            .Services.AddControllers()
+            .AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.PropertyNamingPolicy = null;
+            });
 
         builder.Services.AddDbContext<AppDbContext>(opt =>
         {
