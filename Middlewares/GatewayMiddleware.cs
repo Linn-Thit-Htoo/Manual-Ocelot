@@ -1,9 +1,4 @@
-﻿global using System.Net;
-global using System.Text;
-global using Manual_Ocelot.Constants;
-global using Newtonsoft.Json;
-
-namespace Manual_Ocelot.Middlewares;
+﻿namespace Manual_Ocelot.Middlewares;
 
 public class GatewayMiddleware
 {
