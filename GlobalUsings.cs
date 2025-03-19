@@ -10,3 +10,4 @@ global using Manual_Ocelot.Constants;
 global using Newtonsoft.Json;
 global using System.Collections.Concurrent;
 global using Route = Manual_Ocelot.Configurations.Route;
+global using System.Security.Claims;
