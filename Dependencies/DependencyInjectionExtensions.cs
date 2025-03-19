@@ -1,11 +1,4 @@
-﻿using Manual_Ocelot.Configurations;
-using Manual_Ocelot.Entities;
-using Manual_Ocelot.Middlewares;
-using Manual_Ocelot.Services.GatewayServices;
-using Manual_Ocelot.Services.TokenValidationServices;
-using Microsoft.EntityFrameworkCore;
-
-namespace Manual_Ocelot.Dependencies;
+﻿namespace Manual_Ocelot.Dependencies;
 
 public static class DependencyInjectionExtensions
 {
