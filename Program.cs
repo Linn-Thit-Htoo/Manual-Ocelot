@@ -1,5 +1,3 @@
-using Manual_Ocelot.Dependencies;
-
 namespace Manual_Ocelot;
 
 public class Program
