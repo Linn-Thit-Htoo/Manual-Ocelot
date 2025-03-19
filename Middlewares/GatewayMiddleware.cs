@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Text;
-using Manual_Ocelot.Configurations;
 using Manual_Ocelot.Constants;
-using Manual_Ocelot.Services.GatewayServices;
-using Manual_Ocelot.Services.TokenValidationServices;
 using Newtonsoft.Json;
 
 namespace Manual_Ocelot.Middlewares;
