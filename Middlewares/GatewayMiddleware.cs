@@ -1,7 +1,7 @@
-﻿using System.Net;
-using System.Text;
-using Manual_Ocelot.Constants;
-using Newtonsoft.Json;
+﻿global using System.Net;
+global using System.Text;
+global using Manual_Ocelot.Constants;
+global using Newtonsoft.Json;
 
 namespace Manual_Ocelot.Middlewares;
 
