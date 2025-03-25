@@ -11,7 +11,8 @@ public class GatewayMiddleware
         IServiceScopeFactory serviceScopeFactory,
         RequestDelegate next,
         IWebHostEnvironment webHostEnvironment
-    )
+,
+        ILogger<GatewayMiddleware> logger)
     {
         string filePath = Path.Combine(
             Directory.GetCurrentDirectory(),
@@ -28,6 +29,7 @@ public class GatewayMiddleware
         string jsonStr = File.ReadAllText(filePath);
         _ocelot = JsonConvert.DeserializeObject<Ocelot>(jsonStr)!;
         _next = next;
+        _logger = logger;
     }
 
     public async Task Invoke(HttpContext httpContext)
