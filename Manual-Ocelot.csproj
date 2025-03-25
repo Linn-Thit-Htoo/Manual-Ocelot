@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <PackageId>PhyoPhyoMon.ManualOcelot</PackageId>
+    <PackageId>PPM.Ocelot</PackageId>
     <Version>1.0.0</Version>
     <Author>Lin Thit Htoo</Author>
     <Product>ManualOcelot</Product>
