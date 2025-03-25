@@ -9,7 +9,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddDependencies(builder);
+        builder.Services.AddOcelot(builder);
 
         var app = builder.Build();
 
@@ -21,7 +21,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        app.AddApiGateway();
+        app.UseOcelot();
 
         app.UseAuthorization();
 

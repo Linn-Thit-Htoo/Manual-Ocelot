@@ -2,7 +2,7 @@
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddDependencies(
+    public static IServiceCollection AddOcelot(
         this IServiceCollection services,
         WebApplicationBuilder builder
     )
@@ -36,7 +36,7 @@ public static class DependencyInjectionExtensions
         return services;
     }
 
-    public static IApplicationBuilder AddApiGateway(this WebApplication app)
+    public static IApplicationBuilder UseOcelot(this WebApplication app)
     {
         return app.UseMiddleware<GatewayMiddleware>();
     }
