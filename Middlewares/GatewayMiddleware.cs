@@ -10,9 +10,9 @@ public class GatewayMiddleware
     public GatewayMiddleware(
         IServiceScopeFactory serviceScopeFactory,
         RequestDelegate next,
-        IWebHostEnvironment webHostEnvironment
-,
-        ILogger<GatewayMiddleware> logger)
+        IWebHostEnvironment webHostEnvironment,
+        ILogger<GatewayMiddleware> logger
+    )
     {
         string filePath = Path.Combine(
             Directory.GetCurrentDirectory(),
@@ -125,13 +125,13 @@ public class GatewayMiddleware
 
             response = route.LoadBalancerOptions.Type switch
             {
-                nameof(LoadBalancingConstant.RoundRobin)
-                    => await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(
+                nameof(LoadBalancingConstant.RoundRobin) =>
+                    await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(
                         httpContext,
                         route
                     ),
-                nameof(LoadBalancingConstant.LeastConnection)
-                    => await gatewayService.ProcesssLeastConnectionLoadBalancingRequestV1(
+                nameof(LoadBalancingConstant.LeastConnection) =>
+                    await gatewayService.ProcesssLeastConnectionLoadBalancingRequestV1(
                         httpContext,
                         route
                     ),
