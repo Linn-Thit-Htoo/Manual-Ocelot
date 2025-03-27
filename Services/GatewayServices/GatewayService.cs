@@ -31,7 +31,7 @@ public class GatewayService : IGatewayService
 
             lock (_lock)
             {
-                _lastUsedIndex = (_lastUsedIndex + 1) % route.DownstreamHostAndPorts!.Count;
+                _lastUsedIndex = (_lastUsedIndex + 1) % route.DownstreamHostAndPorts!.Length;
             }
 
             string downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
@@ -104,7 +104,7 @@ public class GatewayService : IGatewayService
             else
             {
                 _lastUsedIndex =
-                    Interlocked.Increment(ref _lastUsedIndex) % route.DownstreamHostAndPorts!.Count;
+                    Interlocked.Increment(ref _lastUsedIndex) % route.DownstreamHostAndPorts!.Length;
 
                 downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
                 downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
@@ -224,7 +224,7 @@ public class GatewayService : IGatewayService
                     route.ServiceName
                 );
             }
-            else if (route.DownstreamHostAndPorts is { Count: > 0 })
+            else if (route.DownstreamHostAndPorts is { Length: > 0 })
             {
                 leastConnectionHost = GetLeastConnectionDownstreamHost(
                     route.DownstreamHostAndPorts
@@ -278,7 +278,7 @@ public class GatewayService : IGatewayService
     }
 
     private Downstreamhostandport GetLeastConnectionDownstreamHost(
-        List<Downstreamhostandport> downstreamHosts
+        Downstreamhostandport[] downstreamHosts
     )
     {
         foreach (var hostPort in downstreamHosts)

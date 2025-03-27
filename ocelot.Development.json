@@ -7,17 +7,23 @@
     {
       "UpstreamPathTemplate": "/api/gateway/Blog/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      //"DownstreamHostAndPorts": [
-      //  {
-      //    "Host": "localhost",
-      //    "Port": 5136
-      //  }
-      //],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ],
       "LoadBalancerOptions": {
         "Type": "RoundRobin"
       },
       "DownstreamPathTemplate": "/api/Blog/{everything}",
       "DownstreamScheme": "http",
+      "RateLimitOptions": {
+        "ClientWhitelist": ["", ""],
+        "EnableRateLimiting": true,
+        "PeriodTimespan": 1, // only seconds
+        "Limit": 1
+      },
       "ServiceName": "blog",
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
