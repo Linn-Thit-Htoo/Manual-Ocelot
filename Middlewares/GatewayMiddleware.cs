@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-
-namespace Manual_Ocelot.Middlewares;
+﻿namespace Manual_Ocelot.Middlewares;
 
 public class GatewayMiddleware
 {
