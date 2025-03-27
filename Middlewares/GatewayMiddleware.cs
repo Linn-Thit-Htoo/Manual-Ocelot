@@ -1,4 +1,6 @@
-﻿namespace Manual_Ocelot.Middlewares;
+﻿using Microsoft.Extensions.Caching.Memory;
+
+namespace Manual_Ocelot.Middlewares;
 
 public class GatewayMiddleware
 {
@@ -38,6 +40,7 @@ public class GatewayMiddleware
         {
             var requestPath = httpContext.Request.Path.ToString();
             var requestMethod = httpContext.Request.Method;
+            var ip = httpContext.Connection.RemoteIpAddress!.ToString();
             var scope = _serviceScopeFactory.CreateScope();
 
             var route = _ocelot.Routes.FirstOrDefault(r =>
@@ -116,6 +119,35 @@ public class GatewayMiddleware
 
                 #endregion
             }
+
+            #region rate limit
+
+            if (route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting)
+            {
+                List<string> whiteListIps = route.RateLimitOptions.ClientWhitelist.ToList();
+                if (!whiteListIps.Any(x => x.Equals(ip)))
+                {
+                    var cache = scope.ServiceProvider.GetRequiredService<IMemoryCache>();
+                    string cacheKey = $"{ip}:{route.UpstreamPathTemplate}";
+
+                    if (cache.TryGetValue(cacheKey, out int requestCount))
+                    {
+                        if (requestCount >= route.RateLimitOptions.Limit)
+                        {
+                            httpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                            return;
+                        }
+                    }
+
+                    cache.Set(
+                        cacheKey,
+                        requestCount + 1,
+                        TimeSpan.FromSeconds(route.RateLimitOptions.PeriodTimespan)
+                    );
+                }
+            }
+
+            #endregion
 
             var gatewayService = scope.ServiceProvider.GetRequiredService<IGatewayService>();
 

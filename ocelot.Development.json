@@ -10,7 +10,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5136
+          "Port": 5027
         }
       ],
       "LoadBalancerOptions": {
@@ -19,16 +19,16 @@
       "DownstreamPathTemplate": "/api/Blog/{everything}",
       "DownstreamScheme": "http",
       "RateLimitOptions": {
-        "ClientWhitelist": ["", ""],
+        "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "PeriodTimespan": 1, // only seconds
+        "PeriodTimespan": 100,
         "Limit": 1
-      },
-      "ServiceName": "blog",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [ "admin" ]
       }
+      //"ServiceName": "blog",
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": [ "admin" ]
+      //}
     }
   ]
 }

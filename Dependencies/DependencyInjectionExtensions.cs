@@ -32,6 +32,7 @@ public static class DependencyInjectionExtensions
         builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
         builder.Services.Configure<AppSetting>(builder.Configuration);
         builder.Services.AddHttpClient();
+        builder.Services.AddMemoryCache();
 
         return services;
     }
