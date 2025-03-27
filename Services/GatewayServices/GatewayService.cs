@@ -104,7 +104,8 @@ public class GatewayService : IGatewayService
             else
             {
                 _lastUsedIndex =
-                    Interlocked.Increment(ref _lastUsedIndex) % route.DownstreamHostAndPorts!.Length;
+                    Interlocked.Increment(ref _lastUsedIndex)
+                    % route.DownstreamHostAndPorts!.Length;
 
                 downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
                 downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
