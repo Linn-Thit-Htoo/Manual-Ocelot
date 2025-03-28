@@ -23,12 +23,12 @@
         "EnableRateLimiting": true,
         "PeriodTimespan": 100,
         "Limit": 1
+      },
+      "ServiceName": "blog",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "admin" ]
       }
-      //"ServiceName": "blog",
-      //"AuthenticationOptions": {
-      //  "AuthenticationProviderKey": "Bearer",
-      //  "AllowedScopes": [ "admin" ]
-      //}
     }
   ]
 }
