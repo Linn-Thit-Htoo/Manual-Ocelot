@@ -4,10 +4,11 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<PackageId>PPM.Ocelot</PackageId>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Author>Lin Thit Htoo</Author>
 		<Product>ManualOcelot</Product>
 		<IsPackable>true</IsPackable>
+		<RepositoryUrl>https://github.com/Linn-Thit-Htoo/Manual-Ocelot.git</RepositoryUrl>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Manual_Ocelot</RootNamespace>
 		<Description>
