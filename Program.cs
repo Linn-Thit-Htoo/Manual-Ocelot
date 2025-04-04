@@ -6,7 +6,6 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-
         builder.Services.AddOcelot(builder);
 
         var app = builder.Build();
