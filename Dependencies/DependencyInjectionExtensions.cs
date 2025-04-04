@@ -26,12 +26,12 @@ public static class DependencyInjectionExtensions
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddDbContext<AppDbContext>(opt =>
-        {
-            opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
-        });
-
-        builder.Services.AddSingleton<IGatewayService, GatewayService>()
+        builder.Services
+            .AddDbContext<AppDbContext>(opt =>
+            {
+                opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
+            })
+            .AddSingleton<IGatewayService, GatewayService>()
             .AddScoped<ITokenValidationService, TokenValidationService>()
             .AddHttpClient()
             .AddMemoryCache()
