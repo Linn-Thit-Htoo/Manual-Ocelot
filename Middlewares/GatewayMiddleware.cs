@@ -41,12 +41,7 @@ public class GatewayMiddleware
             var ip = httpContext.Connection.RemoteIpAddress!.ToString();
             var scope = _serviceScopeFactory.CreateScope();
 
-            var route = _ocelot.Routes.FirstOrDefault(r =>
-                requestPath.StartsWith(
-                    r.UpstreamPathTemplate.Replace("{everything}", ""),
-                    StringComparison.OrdinalIgnoreCase
-                ) && r.UpstreamHttpMethod.Contains(requestMethod)
-            );
+            var route = GetRoute(requestPath, requestMethod);
 
             if (route is null)
             {
@@ -186,4 +181,11 @@ public class GatewayMiddleware
 
     private bool IsRateLimitingValid(Route route) =>
         route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting;
+
+    private Route? GetRoute(string requestPath, string requestMethod) => _ocelot.Routes.FirstOrDefault(r =>
+                requestPath.StartsWith(
+                    r.UpstreamPathTemplate.Replace("{everything}", ""),
+                    StringComparison.OrdinalIgnoreCase
+                ) && r.UpstreamHttpMethod.Contains(requestMethod)
+            );
 }
