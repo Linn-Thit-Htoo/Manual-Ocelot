@@ -76,10 +76,7 @@ public class GatewayMiddleware
 
                 #region Allowed Scopes
 
-                if (
-                    route.AuthenticationOptions.AllowedScopes is not null
-                    && route.AuthenticationOptions.AllowedScopes.Length > 0
-                )
+                if (AllowedScopesValid(route))
                 {
                     string key =
                         _ocelot.GlobalConfiguration.JwtKey!
@@ -181,6 +178,10 @@ public class GatewayMiddleware
 
     private bool IsRateLimitingValid(Route route) =>
         route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting;
+
+    private bool AllowedScopesValid(Route route) =>
+        route.AuthenticationOptions.AllowedScopes is not null
+        && route.AuthenticationOptions.AllowedScopes.Length > 0;
 
     private Route? GetRoute(string requestPath, string requestMethod) =>
         _ocelot.Routes.FirstOrDefault(r =>
