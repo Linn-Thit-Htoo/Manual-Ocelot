@@ -31,11 +31,11 @@ public static class DependencyInjectionExtensions
             opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
         });
 
-        builder.Services.AddSingleton<IGatewayService, GatewayService>();
-        builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
-        builder.Services.Configure<AppSetting>(builder.Configuration);
-        builder.Services.AddHttpClient();
-        builder.Services.AddMemoryCache();
+        builder.Services.AddSingleton<IGatewayService, GatewayService>()
+            .AddScoped<ITokenValidationService, TokenValidationService>()
+            .AddHttpClient()
+            .AddMemoryCache()
+            .Configure<AppSetting>(builder.Configuration);
 
         return services;
     }
