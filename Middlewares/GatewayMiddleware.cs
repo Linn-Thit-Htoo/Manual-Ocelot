@@ -172,6 +172,8 @@ public class GatewayMiddleware
         }
     }
 
+    #region Private Methods
+
     private bool IsAuthenticationValid(Route route) =>
         route.AuthenticationOptions is not null
         && route.AuthenticationOptions.AuthenticationProviderKey is not null;
@@ -190,4 +192,6 @@ public class GatewayMiddleware
                 StringComparison.OrdinalIgnoreCase
             ) && r.UpstreamHttpMethod.Contains(requestMethod)
         );
+
+    #endregion
 }
