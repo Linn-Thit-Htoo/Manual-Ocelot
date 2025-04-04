@@ -117,7 +117,7 @@ public class GatewayMiddleware
 
             #region Rate Limit
 
-            if (route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting)
+            if (IsRateLimitingValid(route))
             {
                 List<string> whiteListIps = route.RateLimitOptions.ClientWhitelist.ToList();
                 if (!whiteListIps.Any(x => x.Equals(ip)))
@@ -183,4 +183,6 @@ public class GatewayMiddleware
     private bool IsAuthenticationValid(Route route) =>
         route.AuthenticationOptions is not null
         && route.AuthenticationOptions.AuthenticationProviderKey is not null;
+
+    private bool IsRateLimitingValid(Route route) => route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting;
 }
