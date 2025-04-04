@@ -55,10 +55,7 @@ public class GatewayMiddleware
                 return;
             }
 
-            if (
-                route.AuthenticationOptions is not null
-                && route.AuthenticationOptions.AuthenticationProviderKey is not null
-            )
+            if (IsAuthenticationValid(route))
             {
                 #region Check Auth
 
@@ -182,4 +179,8 @@ public class GatewayMiddleware
             httpContext.Response.StatusCode = (int)HttpStatusCode.BadGateway;
         }
     }
+
+    private bool IsAuthenticationValid(Route route) =>
+        route.AuthenticationOptions is not null
+        && route.AuthenticationOptions.AuthenticationProviderKey is not null;
 }
