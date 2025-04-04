@@ -54,7 +54,7 @@ public class GatewayMiddleware
             {
                 #region Check Auth
 
-                string authHeader = httpContext.Request.Headers["Authorization"]!;
+                string authHeader = httpContext.Request.Headers.Authorization!;
 
                 if (authHeader is null)
                 {
