@@ -23,9 +23,6 @@ public static class DependencyInjectionExtensions
                 opt.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
 
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
         builder.Services
             .AddDbContext<AppDbContext>(opt =>
             {
@@ -35,7 +32,9 @@ public static class DependencyInjectionExtensions
             .AddScoped<ITokenValidationService, TokenValidationService>()
             .AddHttpClient()
             .AddMemoryCache()
-            .Configure<AppSetting>(builder.Configuration);
+            .Configure<AppSetting>(builder.Configuration)
+            .AddEndpointsApiExplorer()
+            .AddSwaggerGen();
 
         return services;
     }
