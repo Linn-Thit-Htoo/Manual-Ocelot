@@ -184,5 +184,6 @@ public class GatewayMiddleware
         route.AuthenticationOptions is not null
         && route.AuthenticationOptions.AuthenticationProviderKey is not null;
 
-    private bool IsRateLimitingValid(Route route) => route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting;
+    private bool IsRateLimitingValid(Route route) =>
+        route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting;
 }
