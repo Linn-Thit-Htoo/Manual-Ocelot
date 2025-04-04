@@ -118,7 +118,7 @@ public class GatewayMiddleware
                 #endregion
             }
 
-            #region rate limit
+            #region Rate Limit
 
             if (route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting)
             {
