@@ -182,10 +182,11 @@ public class GatewayMiddleware
     private bool IsRateLimitingValid(Route route) =>
         route.RateLimitOptions is not null && route.RateLimitOptions.EnableRateLimiting;
 
-    private Route? GetRoute(string requestPath, string requestMethod) => _ocelot.Routes.FirstOrDefault(r =>
-                requestPath.StartsWith(
-                    r.UpstreamPathTemplate.Replace("{everything}", ""),
-                    StringComparison.OrdinalIgnoreCase
-                ) && r.UpstreamHttpMethod.Contains(requestMethod)
-            );
+    private Route? GetRoute(string requestPath, string requestMethod) =>
+        _ocelot.Routes.FirstOrDefault(r =>
+            requestPath.StartsWith(
+                r.UpstreamPathTemplate.Replace("{everything}", ""),
+                StringComparison.OrdinalIgnoreCase
+            ) && r.UpstreamHttpMethod.Contains(requestMethod)
+        );
 }
