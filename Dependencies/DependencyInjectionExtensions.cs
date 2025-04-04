@@ -23,8 +23,8 @@ public static class DependencyInjectionExtensions
                 opt.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
 
-        builder.Services
-            .AddDbContext<AppDbContext>(opt =>
+        builder
+            .Services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
             })
