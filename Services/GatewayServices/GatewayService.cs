@@ -277,7 +277,7 @@ public class GatewayService : IGatewayService
 
             int timeoutInSeconds = route.TimeoutValue ?? 100;
 
-            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(
+            using CancellationTokenSource cancellationTokenSource = new(
                 TimeSpan.FromSeconds(timeoutInSeconds)
             );
             CancellationToken cancellationToken = cancellationTokenSource.Token;
