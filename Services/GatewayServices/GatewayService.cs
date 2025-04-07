@@ -141,11 +141,16 @@ public class GatewayService : IGatewayService
 
             int timeoutInSeconds = route.TimeoutValue ?? 100;
 
-            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds));
+            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(
+                TimeSpan.FromSeconds(timeoutInSeconds)
+            );
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             HttpClient httpClient = _httpClientFactory.CreateClient();
-            HttpResponseMessage downstreamResponse = await httpClient.SendAsync(downstreamRequest, cancellationToken);
+            HttpResponseMessage downstreamResponse = await httpClient.SendAsync(
+                downstreamRequest,
+                cancellationToken
+            );
 
             return downstreamResponse;
         }
@@ -272,11 +277,16 @@ public class GatewayService : IGatewayService
 
             int timeoutInSeconds = route.TimeoutValue ?? 100;
 
-            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds));
+            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(
+                TimeSpan.FromSeconds(timeoutInSeconds)
+            );
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             HttpClient httpClient = _httpClientFactory.CreateClient();
-            var downstreamResponse = await httpClient.SendAsync(downstreamRequest, cancellationToken);
+            var downstreamResponse = await httpClient.SendAsync(
+                downstreamRequest,
+                cancellationToken
+            );
 
             DecrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
 
