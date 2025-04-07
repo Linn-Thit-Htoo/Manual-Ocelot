@@ -138,11 +138,9 @@ public class GatewayMiddleware
 
             var gatewayService = scope.ServiceProvider.GetRequiredService<IGatewayService>();
 
-            HttpResponseMessage response = null!;
-
             #region Load Balancing
 
-            response = route.LoadBalancerOptions.Type switch
+            HttpResponseMessage response = route.LoadBalancerOptions.Type switch
             {
                 nameof(LoadBalancingConstant.RoundRobin) =>
                     await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(
