@@ -28,7 +28,8 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": [ "admin" ]
-      }
+      },
+      "TimeoutValue": 100
     }
   ]
 }

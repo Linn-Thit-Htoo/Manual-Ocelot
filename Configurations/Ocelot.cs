@@ -23,6 +23,7 @@ public class Route
     public Ratelimitoptions RateLimitOptions { get; set; }
     public string ServiceName { get; set; }
     public Authenticationoptions AuthenticationOptions { get; set; }
+    public int? TimeoutValue { get; set; }
 }
 
 public class Loadbalanceroptions
