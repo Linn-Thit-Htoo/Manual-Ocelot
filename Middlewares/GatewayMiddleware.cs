@@ -148,7 +148,7 @@ public class GatewayMiddleware
                         route
                     ),
                 nameof(LoadBalancingConstant.LeastConnection) =>
-                    await gatewayService.ProcesssLeastConnectionLoadBalancingRequestV1(
+                    await gatewayService.ProcessLeastConnectionLoadBalancingRequestV1(
                         httpContext,
                         route
                     ),

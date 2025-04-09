@@ -10,11 +10,11 @@ public interface IGatewayService
         HttpContext httpContext,
         Route route
     );
-    Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequest(
+    Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequest(
         HttpContext httpContext,
         Route route
     );
-    Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequestV1(
+    Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequestV1(
         HttpContext httpContext,
         Route route
     );

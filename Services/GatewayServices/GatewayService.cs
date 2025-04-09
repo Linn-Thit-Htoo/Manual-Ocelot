@@ -160,7 +160,7 @@ public class GatewayService : IGatewayService
         }
     }
 
-    public async Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequest(
+    public async Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequest(
         HttpContext httpContext,
         Route route
     )
@@ -217,7 +217,7 @@ public class GatewayService : IGatewayService
         }
     }
 
-    public async Task<HttpResponseMessage> ProcesssLeastConnectionLoadBalancingRequestV1(
+    public async Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequestV1(
         HttpContext httpContext,
         Route route
     )
