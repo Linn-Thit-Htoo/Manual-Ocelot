@@ -36,6 +36,11 @@ public static class DependencyInjectionExtensions
             .AddEndpointsApiExplorer()
             .AddSwaggerGen();
 
+        builder.Services.AddHttpClient("ServiceDiscoveryClient", opt =>
+        {
+            opt.BaseAddress = new Uri("http://123.253.20.225:81");
+        });
+
         return services;
     }
 

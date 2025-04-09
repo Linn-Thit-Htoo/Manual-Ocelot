@@ -143,12 +143,12 @@ public class GatewayMiddleware
             HttpResponseMessage response = route.LoadBalancerOptions.Type switch
             {
                 nameof(LoadBalancingConstant.RoundRobin) =>
-                    await gatewayService.ProcessRoundRobinLoadBalancingRequestV1(
+                    await gatewayService.ProcessRoundRobinLoadBalancingRequestV2(
                         httpContext,
                         route
                     ),
                 nameof(LoadBalancingConstant.LeastConnection) =>
-                    await gatewayService.ProcessLeastConnectionLoadBalancingRequestV1(
+                    await gatewayService.ProcessLeastConnectionLoadBalancingRequestV2(
                         httpContext,
                         route
                     ),
