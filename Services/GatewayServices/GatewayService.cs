@@ -180,7 +180,7 @@ public class GatewayService : IGatewayService
                 HttpRequestMessage serviceDiscoveryRequest = new HttpRequestMessage()
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri(serviceDiscoveryClient.BaseAddress!, $"/api/ServiceDiscovery/DiscoverService?serviceName={route.ServiceName}"),
+                    RequestUri = new Uri(serviceDiscoveryClient.BaseAddress!, $"/api/v1/ServiceDiscovery/DiscoverService?serviceName={route.ServiceName}"),
                 };
                 HttpResponseMessage serviceDiscoveryResponse = await serviceDiscoveryClient.SendAsync(serviceDiscoveryRequest);
                 serviceDiscoveryResponse.EnsureSuccessStatusCode();
@@ -539,7 +539,7 @@ public class GatewayService : IGatewayService
         HttpRequestMessage serviceDiscoveryRequest = new HttpRequestMessage()
         {
             Method = HttpMethod.Get,
-            RequestUri = new Uri(serviceDiscoveryClient.BaseAddress!, $"/api/ServiceDiscovery/DiscoverService?serviceName={serviceName}"),
+            RequestUri = new Uri(serviceDiscoveryClient.BaseAddress!, $"/api/v1/ServiceDiscovery/DiscoverService?serviceName={serviceName}"),
         };
         HttpResponseMessage serviceDiscoveryResponse = await serviceDiscoveryClient.SendAsync(serviceDiscoveryRequest);
         serviceDiscoveryResponse.EnsureSuccessStatusCode();
