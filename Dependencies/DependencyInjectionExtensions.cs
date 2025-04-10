@@ -24,10 +24,7 @@ public static class DependencyInjectionExtensions
             });
 
         builder
-            .Services.AddDbContext<AppDbContext>(opt =>
-            {
-                opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
-            })
+            .Services
             .AddSingleton<IGatewayService, GatewayService>()
             .AddScoped<ITokenValidationService, TokenValidationService>()
             .AddHttpClient()

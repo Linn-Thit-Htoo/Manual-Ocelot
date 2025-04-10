@@ -9,7 +9,6 @@ public class GatewayService : IGatewayService
     private static int _lastUsedIndex = 0;
     private readonly ConcurrentDictionary<string, int> _activeConnections = new();
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly AppDbContext _appDbContext;
 
     public GatewayService(
         IHttpClientFactory httpClientFactory,
@@ -19,7 +18,6 @@ public class GatewayService : IGatewayService
         _httpClientFactory = httpClientFactory;
 
         var scope = serviceScopeFactory.CreateScope();
-        _appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
     public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequest(
@@ -79,89 +77,89 @@ public class GatewayService : IGatewayService
         }
     }
 
-    public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequestV1(
-        HttpContext httpContext,
-        Route route
-    )
-    {
-        try
-        {
-            var requestPath = httpContext.Request.Path.ToString();
-            var requestMethod = httpContext.Request.Method;
+    //public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequestV1(
+    //    HttpContext httpContext,
+    //    Route route
+    //)
+    //{
+    //    try
+    //    {
+    //        var requestPath = httpContext.Request.Path.ToString();
+    //        var requestMethod = httpContext.Request.Method;
 
-            string downstreamHost = string.Empty;
-            int downstreamPort = default;
+    //        string downstreamHost = string.Empty;
+    //        int downstreamPort = default;
 
-            if (!string.IsNullOrEmpty(route.ServiceName))
-            {
-                var instances = await _appDbContext
-                    .Tbl_ServiceRegistries.AsNoTracking()
-                    .Where(x => x.ServiceName == route.ServiceName)
-                    .ToListAsync();
+    //        if (!string.IsNullOrEmpty(route.ServiceName))
+    //        {
+    //            var instances = await _appDbContext
+    //                .Tbl_ServiceRegistries.AsNoTracking()
+    //                .Where(x => x.ServiceName == route.ServiceName)
+    //                .ToListAsync();
 
-                _lastUsedIndex = Interlocked.Increment(ref _lastUsedIndex) % instances.Count;
+    //            _lastUsedIndex = Interlocked.Increment(ref _lastUsedIndex) % instances.Count;
 
-                downstreamHost = instances[_lastUsedIndex].Host;
-                downstreamPort = instances[_lastUsedIndex].Port;
-            }
-            else
-            {
-                _lastUsedIndex =
-                    Interlocked.Increment(ref _lastUsedIndex)
-                    % route.DownstreamHostAndPorts!.Length;
+    //            downstreamHost = instances[_lastUsedIndex].Host;
+    //            downstreamPort = instances[_lastUsedIndex].Port;
+    //        }
+    //        else
+    //        {
+    //            _lastUsedIndex =
+    //                Interlocked.Increment(ref _lastUsedIndex)
+    //                % route.DownstreamHostAndPorts!.Length;
 
-                downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
-                downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
-            }
+    //            downstreamHost = route.DownstreamHostAndPorts[_lastUsedIndex].Host;
+    //            downstreamPort = route.DownstreamHostAndPorts[_lastUsedIndex].Port;
+    //        }
 
-            string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
-            string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
+    //        string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
+    //        string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
 
-            string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
+    //        string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
 
-            string downstreamUrl =
-                $"{route.DownstreamScheme}://{downstreamHost}:{downstreamPort}{downstreamPath}";
-            if (httpContext.Request.QueryString.HasValue)
-            {
-                downstreamUrl += httpContext.Request.QueryString;
-            }
+    //        string downstreamUrl =
+    //            $"{route.DownstreamScheme}://{downstreamHost}:{downstreamPort}{downstreamPath}";
+    //        if (httpContext.Request.QueryString.HasValue)
+    //        {
+    //            downstreamUrl += httpContext.Request.QueryString;
+    //        }
 
-            var downstreamRequest = new HttpRequestMessage(
-                new HttpMethod(requestMethod),
-                downstreamUrl
-            );
+    //        var downstreamRequest = new HttpRequestMessage(
+    //            new HttpMethod(requestMethod),
+    //            downstreamUrl
+    //        );
 
-            if (httpContext.Request.Body.CanRead)
-            {
-                using var reader = new StreamReader(httpContext.Request.Body);
-                var body = await reader.ReadToEndAsync();
-                downstreamRequest.Content = new StringContent(
-                    body,
-                    Encoding.UTF8,
-                    "application/json"
-                );
-            }
+    //        if (httpContext.Request.Body.CanRead)
+    //        {
+    //            using var reader = new StreamReader(httpContext.Request.Body);
+    //            var body = await reader.ReadToEndAsync();
+    //            downstreamRequest.Content = new StringContent(
+    //                body,
+    //                Encoding.UTF8,
+    //                "application/json"
+    //            );
+    //        }
 
-            int timeoutInSeconds = route.TimeoutValue ?? 100;
+    //        int timeoutInSeconds = route.TimeoutValue ?? 100;
 
-            using CancellationTokenSource cancellationTokenSource = new(
-                TimeSpan.FromSeconds(timeoutInSeconds)
-            );
-            CancellationToken cancellationToken = cancellationTokenSource.Token;
+    //        using CancellationTokenSource cancellationTokenSource = new(
+    //            TimeSpan.FromSeconds(timeoutInSeconds)
+    //        );
+    //        CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            HttpClient httpClient = _httpClientFactory.CreateClient();
-            HttpResponseMessage downstreamResponse = await httpClient.SendAsync(
-                downstreamRequest,
-                cancellationToken
-            );
+    //        HttpClient httpClient = _httpClientFactory.CreateClient();
+    //        HttpResponseMessage downstreamResponse = await httpClient.SendAsync(
+    //            downstreamRequest,
+    //            cancellationToken
+    //        );
 
-            return downstreamResponse;
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
+    //        return downstreamResponse;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw;
+    //    }
+    //}
 
     public async Task<HttpResponseMessage> ProcessRoundRobinLoadBalancingRequestV2(
         HttpContext httpContext,
@@ -188,8 +186,8 @@ public class GatewayService : IGatewayService
                 serviceDiscoveryResponse.EnsureSuccessStatusCode();
 
                 string responseJson = await serviceDiscoveryResponse.Content.ReadAsStringAsync();
-                var model = JsonConvert.DeserializeObject<Result<List<ServiceDiscoveryModel>>>(responseJson) ?? throw new ArgumentException("No service found.");
-                var instances = model!.Data;
+                var model = JsonConvert.DeserializeObject<Result<DiscoverServiceResponse>>(responseJson) ?? throw new ArgumentException("No service found.");
+                var instances = model!.Data!.Services;
 
                 _lastUsedIndex = Interlocked.Increment(ref _lastUsedIndex) % instances!.Count;
 
@@ -312,86 +310,86 @@ public class GatewayService : IGatewayService
         }
     }
 
-    public async Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequestV1(
-        HttpContext httpContext,
-        Route route
-    )
-    {
-        try
-        {
-            var requestPath = httpContext.Request.Path.ToString();
-            var requestMethod = httpContext.Request.Method;
+    //public async Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequestV1(
+    //    HttpContext httpContext,
+    //    Route route
+    //)
+    //{
+    //    try
+    //    {
+    //        var requestPath = httpContext.Request.Path.ToString();
+    //        var requestMethod = httpContext.Request.Method;
 
-            Downstreamhostandport? leastConnectionHost = null;
+    //        Downstreamhostandport? leastConnectionHost = null;
 
-            if (!string.IsNullOrEmpty(route.ServiceName))
-            {
-                leastConnectionHost = await GetLeastConnectionDownstreamHostFromServiceRegistry(
-                    route.ServiceName
-                );
-            }
-            else if (route.DownstreamHostAndPorts is { Length: > 0 })
-            {
-                leastConnectionHost = GetLeastConnectionDownstreamHost(
-                    route.DownstreamHostAndPorts
-                );
-            }
+    //        if (!string.IsNullOrEmpty(route.ServiceName))
+    //        {
+    //            leastConnectionHost = await GetLeastConnectionDownstreamHostFromServiceRegistry(
+    //                route.ServiceName
+    //            );
+    //        }
+    //        else if (route.DownstreamHostAndPorts is { Length: > 0 })
+    //        {
+    //            leastConnectionHost = GetLeastConnectionDownstreamHost(
+    //                route.DownstreamHostAndPorts
+    //            );
+    //        }
 
-            if (leastConnectionHost is null)
-                throw new Exception("No available downstream instances.");
+    //        if (leastConnectionHost is null)
+    //            throw new Exception("No available downstream instances.");
 
-            IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
+    //        IncrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
 
-            string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
-            string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
+    //        string upstreamBasePath = route.UpstreamPathTemplate.Replace("{everything}", "");
+    //        string downstreamBasePath = route.DownstreamPathTemplate.Replace("{everything}", "");
 
-            string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
+    //        string downstreamPath = requestPath.Replace(upstreamBasePath, downstreamBasePath);
 
-            string downstreamUrl =
-                $"{route.DownstreamScheme}://{leastConnectionHost.Host}:{leastConnectionHost.Port}{downstreamPath}";
-            if (httpContext.Request.QueryString.HasValue)
-            {
-                downstreamUrl += httpContext.Request.QueryString;
-            }
+    //        string downstreamUrl =
+    //            $"{route.DownstreamScheme}://{leastConnectionHost.Host}:{leastConnectionHost.Port}{downstreamPath}";
+    //        if (httpContext.Request.QueryString.HasValue)
+    //        {
+    //            downstreamUrl += httpContext.Request.QueryString;
+    //        }
 
-            var downstreamRequest = new HttpRequestMessage(
-                new HttpMethod(requestMethod),
-                downstreamUrl
-            );
+    //        var downstreamRequest = new HttpRequestMessage(
+    //            new HttpMethod(requestMethod),
+    //            downstreamUrl
+    //        );
 
-            if (httpContext.Request.Body.CanRead)
-            {
-                using var reader = new StreamReader(httpContext.Request.Body);
-                var body = await reader.ReadToEndAsync();
-                downstreamRequest.Content = new StringContent(
-                    body,
-                    Encoding.UTF8,
-                    "application/json"
-                );
-            }
+    //        if (httpContext.Request.Body.CanRead)
+    //        {
+    //            using var reader = new StreamReader(httpContext.Request.Body);
+    //            var body = await reader.ReadToEndAsync();
+    //            downstreamRequest.Content = new StringContent(
+    //                body,
+    //                Encoding.UTF8,
+    //                "application/json"
+    //            );
+    //        }
 
-            int timeoutInSeconds = route.TimeoutValue ?? 100;
+    //        int timeoutInSeconds = route.TimeoutValue ?? 100;
 
-            using CancellationTokenSource cancellationTokenSource = new(
-                TimeSpan.FromSeconds(timeoutInSeconds)
-            );
-            CancellationToken cancellationToken = cancellationTokenSource.Token;
+    //        using CancellationTokenSource cancellationTokenSource = new(
+    //            TimeSpan.FromSeconds(timeoutInSeconds)
+    //        );
+    //        CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            HttpClient httpClient = _httpClientFactory.CreateClient();
-            var downstreamResponse = await httpClient.SendAsync(
-                downstreamRequest,
-                cancellationToken
-            );
+    //        HttpClient httpClient = _httpClientFactory.CreateClient();
+    //        var downstreamResponse = await httpClient.SendAsync(
+    //            downstreamRequest,
+    //            cancellationToken
+    //        );
 
-            DecrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
+    //        DecrementActiveConnections(leastConnectionHost.Host, leastConnectionHost.Port);
 
-            return downstreamResponse;
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
+    //        return downstreamResponse;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw;
+    //    }
+    //}
 
     public async Task<HttpResponseMessage> ProcessLeastConnectionLoadBalancingRequestV2(
         HttpContext httpContext,
@@ -509,29 +507,29 @@ public class GatewayService : IGatewayService
         }
     }
 
-    private async Task<Downstreamhostandport?> GetLeastConnectionDownstreamHostFromServiceRegistry(
-        string serviceName
-    )
-    {
-        var instances = await _appDbContext
-            .Tbl_ServiceRegistries.AsNoTracking()
-            .Where(x => x.ServiceName == serviceName)
-            .Select(x => new Downstreamhostandport { Host = x.Host, Port = x.Port })
-            .ToListAsync();
+    //private async Task<Downstreamhostandport?> GetLeastConnectionDownstreamHostFromServiceRegistry(
+    //    string serviceName
+    //)
+    //{
+    //    var instances = await _appDbContext
+    //        .Tbl_ServiceRegistries.AsNoTracking()
+    //        .Where(x => x.ServiceName == serviceName)
+    //        .Select(x => new Downstreamhostandport { Host = x.Host, Port = x.Port })
+    //        .ToListAsync();
 
-        if (instances.Count <= 0)
-            return null;
+    //    if (instances.Count <= 0)
+    //        return null;
 
-        foreach (var instance in instances)
-        {
-            var key = $"{instance.Host}:{instance.Port}";
-            _activeConnections.TryAdd(key, 0);
-        }
+    //    foreach (var instance in instances)
+    //    {
+    //        var key = $"{instance.Host}:{instance.Port}";
+    //        _activeConnections.TryAdd(key, 0);
+    //    }
 
-        return instances
-            .OrderBy(instance => _activeConnections[$"{instance.Host}:{instance.Port}"])
-            .FirstOrDefault();
-    }
+    //    return instances
+    //        .OrderBy(instance => _activeConnections[$"{instance.Host}:{instance.Port}"])
+    //        .FirstOrDefault();
+    //}
 
     private async Task<Downstreamhostandport?> GetLeastConnectionDownstreamHostFromServiceRegistryV1(
         string serviceName
@@ -547,8 +545,8 @@ public class GatewayService : IGatewayService
         serviceDiscoveryResponse.EnsureSuccessStatusCode();
 
         string responseJson = await serviceDiscoveryResponse.Content.ReadAsStringAsync();
-        var model = JsonConvert.DeserializeObject<Result<List<ServiceDiscoveryModel>>>(responseJson) ?? throw new ArgumentException("No service found.");
-        var instances = model!.Data.Select(x => new Downstreamhostandport
+        var model = JsonConvert.DeserializeObject<Result<DiscoverServiceResponse>>(responseJson) ?? throw new ArgumentException("No service found.");
+        var instances = model!.Data!.Services.Select(x => new Downstreamhostandport
         {
             Host = x.HostName,
             Port = x.Port

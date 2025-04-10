@@ -1,5 +1,10 @@
 ﻿namespace Manual_Ocelot.Models
 {
+    public class DiscoverServiceResponse
+    {
+        public List<ServiceDiscoveryModel> Services { get; set; }
+    }
+
     public class ServiceDiscoveryModel
     {
         public Guid ServiceId { get; set; }
